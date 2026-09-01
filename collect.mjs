@@ -13,8 +13,10 @@ const rows = vehicles.map(v => JSON.stringify({
   t: now.toISOString().slice(0, 16), vid: v.equipmentID, rt: v.routeID,
   load: v.load, cap: v.capacity, next: v.nextStopID, last: v.lastStopID,
   eta: v.nextStopETA, insvc: v.inService, sched: v.scheduleNumber,
+  lat: v.lat, lng: v.lng, h: v.h,
 })).join('\n') + '\n';
 const fs = await import('node:fs');
+fs.mkdirSync('data', { recursive: true });
 const f = `data/${now.toISOString().slice(0, 10)}.jsonl`;
 fs.appendFileSync(f, rows);
 console.log(`${vehicles.length} vehicles → ${f}`);
