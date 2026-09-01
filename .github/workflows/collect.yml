@@ -1,0 +1,23 @@
+name: Collect bus loads
+on:
+  schedule:
+    # every 12 min through IU service hours (≈7:45am–midnight ET → 11:45–04:00 UTC)
+    - cron: '*/12 12-23 * * *'
+    - cron: '*/12 0-3 * * *'
+  workflow_dispatch:
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    permissions: { contents: write }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: node collect.mjs
+      - name: Commit sample
+        run: |
+          git config user.name beeline-logger
+          git config user.email logger@beeline.local
+          git add data/
+          git diff --cached --quiet || git commit -m "sample $(date -u +%Y-%m-%dT%H:%M)"
+          git pull --rebase && git push
